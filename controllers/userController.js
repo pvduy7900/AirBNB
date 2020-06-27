@@ -2,6 +2,7 @@ const User = require("../models/user")
 const { generateToken, loginWithEmail } = require("../services/authenticationServiec")
 const bcrypt = require("bcrypt")
 const { use } = require("../routes/users")
+const { request } = require("express")
 // lấy dữ liệu nên hơi khác
 exports.getUserList = async (request, response) => {
     try {
@@ -115,6 +116,45 @@ exports.logout = async (request, response) => {
 
 }
 
+exports.updateUser = async (request, response) => {
+    const { name, email, password, role, introduction, token } = request.body
+    if (!name && !email && !password && !role && !introduction) {
+        return response.status(400).json({
+            status: "fail",
+            message: "sao ko update gi het?"
+        })
+    }
+    if (!token) {
+        return response.status(400).json({
+            status: "fail",
+            message: "khong co token ne!"
+        })
+    }
+
+    const user = await User.findOne({ tokens: token })
+
+    if (name) {
+        user.name = name
+    }
+    if (email) {
+        user.email = email
+    }
+    if (password) {
+        user.password = password
+    }
+    if (role) {
+        user.role = role
+    }
+    if (introduction) {
+        user.introduction = introduction
+    }
+    user.save()
+
+    response.status(200).json({
+        status: "success",
+        data: user
+    })
+}
 
 
 
