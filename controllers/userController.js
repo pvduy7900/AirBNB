@@ -1,6 +1,7 @@
 const User = require("../models/user")
 const { generateToken, loginWithEmail } = require("../services/authenticationServiec")
 const bcrypt = require("bcrypt")
+const { use } = require("../routes/users")
 // lấy dữ liệu nên hơi khác
 exports.getUserList = async (request, response) => {
     try {
@@ -20,20 +21,30 @@ exports.getUserList = async (request, response) => {
 // tạo ra 1 cái dữ liệu
 exports.createUser = async (request, response) => {
     try {
- 
 
-        const { name, email, password } = request.body
-        if (!name || !email || !password) {
+
+        const { name, email, password, role, introduction } = request.body
+        if (!name || !email || !password || !role) {
             return response.status(400).json({
-                message: "name, email, password are required"
+                message: "name, email, password, role are required"
             })
+        }
+        if (role === "Host") {
+            if (!introduction) {
+                return response.status(400).json({
+                    status: "Fail",
+                    message: "Host must have introduction"
+                })
+            }
         }
         const hashedPassword = await bcrypt.hash(request.body.password, 10)
 
         const user = await User.create({
             email: email,
             name: name,
-            password: hashedPassword
+            password: hashedPassword,
+            role: role,
+            introduction: introduction
         })
 
         const token = await generateToken(user)
@@ -71,3 +82,40 @@ exports.login = async (request, response) => {
         })
     }
 }
+
+
+
+exports.logout = async (request, response) => {
+    // 1. lấy và kiễm tra tính khả dụng của thông tin từ clients
+    // 2. kiểm tra và update thông tin trong database của mình
+    // 3. trả lời lại cho clients
+    try {
+        const token = request.body.token
+        if (!token) {
+            response.status(400).json({
+                status: "fail",
+                message: "No token here"
+            })
+        }
+
+        const user = await User.findOne({ tokens: token })
+
+        user.tokens = user.tokens.filter(token => token != token)
+        await user.save()
+        response.status(200).json({
+            status: "log out success",
+            data: null
+        })
+    } catch (error) {
+        response.status(400).json({
+            status: "fail",
+            message: " fail log out"
+        })
+    }
+
+}
+
+
+
+
+
