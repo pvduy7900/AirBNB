@@ -23,4 +23,39 @@ exports.loginWithEmail = async (email, password) => {
     }
     return user
 }
+// ask again
+exports.requiresLogin = async (request, response, next) => {
 
+    const token = request.body.token
+    if (!token) {
+        return response.status(401).json({
+            message: "no token here"
+        })
+    }
+    // use JWT library, have a decode, get information from database
+    try {
+        const decode = jwt.verify(token, process.env.JWT_SECRET)
+        const user = await User.findOne({ _id: decode.id, tokens: token })
+        if (!user) throw new Error("Unauthorized")
+        // 
+        request.user = user 
+        request.token = token
+        next()
+    } catch (error) {
+        return response.status(401).json({
+            status: "Fail",
+            message: "decode somth wrong"
+        })
+    }
+}
+
+exports.requiresHost = async (request, response, next) => {
+    const user = request.user
+    if (user.role != "Host") {
+        return response.status(401).json({
+            status: "Fail",
+            message: "Host is wrong"
+        })
+    }
+    next()
+}

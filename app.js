@@ -11,6 +11,9 @@ require("dotenv").config({ path: ".env" });
 
 
 var indexRouter = require('./routes/index');
+
+
+const experienceRouter = require(".//routes/experience")
 const usersRouter = require('./routes/users');// gắn link với sever
 const reviewsRouter = require('./routes/reviews');// gắn link với sever
 var app = express();
@@ -27,8 +30,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 
+
+
 app.use(usersRouter);// helloooooooo, this one must be change, nhìn phía trên sẽ thấy
 app.use(reviewsRouter);// tương tự nè
+app.use(experienceRouter)
+
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -46,6 +54,8 @@ app.use(function(err, req, res, next) {
 });
 
 const mongoose = require("mongoose");
+const Experience = require('./models/experienceModel');
+const { createExperience } = require('./controllers/createExperience');
 
 
 // quan trọng
