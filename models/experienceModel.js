@@ -1,11 +1,7 @@
 const mongoose = require("mongoose")
 
 const experienceSchema = mongoose.Schema({
-    Host:{
-        type:mongoose.Schema.ObjectId,
-        ref:'User',
-        required:[true,"host is required"]
-    },
+
     title: {
         type: String,
         require: [true, "title is required"],
@@ -13,35 +9,44 @@ const experienceSchema = mongoose.Schema({
     },
     duration: {
         type: Number,
-        // required: [true, "daration is raquired"]
+        required: [true, "daration is raquired"]
     },
+    images: [{
+        type: String,
+        required: [true, "image is required"]
+    }],
+    
+    country: [{
+        country: {
+            type: String
+        },
+        city: {
+            type: String
+        }
+    }],
+    rate: {
+        type: Number,
+        // required:[true,"price is required"]
+    },
+    tags: [{
+        type: String,
+        // required: [true, "tags is required"]
+    }],
+    description: {
+        type: String,
+        // required: [true, "Description is required"]
+    },
+    items: [{
+        type: String,
+        // required:[true, "items is required"]
+    }],
+    
     groupSize: {
         type: Number,
         // required: [true, "groupSize is required"]
-    },
-    images: [{
-        type: String
-    }],
-    description:{
-        type:String,
-        required:[true,"Description is required"]
-    },
-    items:[{
-        type:String,
-        // required:[true, "items is required"]
-    }],
-    price:{
-        type:Number,
-        // required:[true,"price is required"]
-    },
-    country:{
-        city: String,
-        country: String,
-        // required:[true, "country is required"]
-    },
-    tags:{
-        type:String
     }
+}, {
+    timestamps: true
 })
 
 const Experience = mongoose.model("Experience", experienceSchema)

@@ -3,8 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const mongoose = require("mongoose");
 
-const mongodb = require("mongodb")
 require("dotenv").config({ path: ".env" });
 
 //dac biet ne
@@ -16,6 +16,8 @@ var indexRouter = require('./routes/index');
 const experienceRouter = require(".//routes/experience")
 const usersRouter = require('./routes/users');// gắn link với sever
 const reviewsRouter = require('./routes/reviews');// gắn link với sever
+const tagsRouter = require("./routes/tags")
+
 var app = express();
 
 // view engine setup
@@ -34,8 +36,8 @@ app.use('/', indexRouter);
 
 app.use(usersRouter);// helloooooooo, this one must be change, nhìn phía trên sẽ thấy
 app.use(reviewsRouter);// tương tự nè
-app.use(experienceRouter)
-
+app.use(experienceRouter);
+app.use(tagsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -52,10 +54,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-const mongoose = require("mongoose");
-const Experience = require('./models/experienceModel');
-const { createExperience } = require('./controllers/createExperience');
 
 
 // quan trọng
