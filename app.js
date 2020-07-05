@@ -58,8 +58,8 @@ app.use(function(err, req, res, next) {
 
 // quan trọng
 app.listen(5000,() => console.log(`example app`))
-mongoose.connect("mongodb://localhost:27017/airbnb", { 
-
+mongoose.connect(process.env.JWT_SECRET, { 
+ 
   useCreateIndex: true, 
   useNewUrlParser: true, 
   useFindAndModify: false, 
